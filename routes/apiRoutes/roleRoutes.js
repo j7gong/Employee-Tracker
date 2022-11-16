@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db/connection');
 
 // Get all roles
-router.get('/api/roles', (req, res) => {
+router.get('/roles', (req, res) => {
     const sql = `SELECT role.title, role.id, d.name department_name, role.salary FROM role left join department d ON role.department_id = d.id`;
     db.query(sql, (err, rows) => {
         if (err) {
@@ -18,7 +18,7 @@ router.get('/api/roles', (req, res) => {
 });
 
 // Delete a role
-router.delete('/api/roles/:id', (req, res) => {
+router.delete('/roles/:id', (req, res) => {
     const sql = `DELETE FROM role WHERE id = ?`;
     const params = [req.params.id];
 
@@ -41,7 +41,7 @@ router.delete('/api/roles/:id', (req, res) => {
 });
 
 // Create a role
-router.post('/api/roles', ({body}, res) => {
+router.post('/roles', ({body}, res) => {
     const errors =inputCheck(body, 'title', 'salary', 'department_id');
     if (errors) {
         res.status(400).json({error: errors});

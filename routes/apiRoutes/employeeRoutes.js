@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db/connection');
 
 // Get all employees
-router.get('/api/employees', (req, res) => {
+router.get('/employees', (req, res) => {
     const sql = `select e.id, e.first_name, e.last_name, r.title, d.name department_name, r.salary, CONCAT(m.first_name, ', ', m.last_name) manager
     from employee e
     left join role r on e.role_id = r.id
@@ -22,7 +22,7 @@ router.get('/api/employees', (req, res) => {
 });
 
 // Delete an employee
-router.delete('/api/employees/:id', (req, res) => {
+router.delete('/employees/:id', (req, res) => {
     const sql = `DELETE FROM employee WHERE id = ?`;
     const params = [req.params.id];
 
@@ -45,7 +45,7 @@ router.delete('/api/employees/:id', (req, res) => {
 });
 
 // Create an employee
-router.post('/api/employees', ({body}, res) => {
+router.post('/employees', ({body}, res) => {
     const errors =inputCheck(body, 'first_name', 'last_name', 'role_id', 'manager_id');
     if (errors) {
         res.status(400).json({error: errors});
@@ -69,7 +69,7 @@ router.post('/api/employees', ({body}, res) => {
 });
 
 // Update an employee
-router.put('/api/employees/:id', (req, res) => {
+router.put('/employees/:id', (req, res) => {
     const errors = inputCheck(req.body, 'role_id');
     if (errors) {
         res.status(400).json({ error: errors });

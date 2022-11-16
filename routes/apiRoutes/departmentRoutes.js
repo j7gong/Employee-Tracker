@@ -4,7 +4,7 @@ const db = require('../../db/connection');
 const inputCheck = require('../../utils/inputCheck');
 
 // Get all departments
-router.get('/api/departments', (req, res) => {
+router.get('/departments', (req, res) => {
     const sql = `SELECT * FROM department`;
     db.query(sql, (err, rows) => {
         if (err) {
@@ -19,7 +19,7 @@ router.get('/api/departments', (req, res) => {
 });
 
 // Get a single departments
-router.get('/api/departments/:id', (req, res) => {
+router.get('/departments/:id', (req, res) => {
     const sql = `SELECT * FROM department WHERE id = ?`;
     const params = [req.params.id];
 
@@ -36,7 +36,7 @@ router.get('/api/departments/:id', (req, res) => {
 });
 
 // Delete a department
-router.delete('/api/departments/:id', (req, res) => {
+router.delete('/departments/:id', (req, res) => {
     const sql = `DELETE FROM department WHERE id = ?`;
     const params = [req.params.id];
 
@@ -59,7 +59,7 @@ router.delete('/api/departments/:id', (req, res) => {
 });
 
 // Create a department
-router.post('/api/departments', ({body}, res) => {
+router.post('/departments', ({body}, res) => {
     const errors =inputCheck(body, 'name');
     if (errors) {
         res.status(400).json({error: errors});
