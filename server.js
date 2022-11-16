@@ -52,6 +52,25 @@ app.get('/api/roles', (req, res) => {
     });
 });
 
+// Get all employees
+app.get('/api/employees', (req, res) => {
+    const sql = `select e.id, e.first_name, e.last_name, r.title, d.name department_name, r.salary, CONCAT(m.first_name, ', ', m.last_name) manager
+    from employee e
+    left join role r on e.role_id = r.id
+    left join employee m on e.manager_id = m.id
+    left join department d on r.department_id = d.id;`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({error: err.message});
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
+
 // Get a single departments
 app.get('/api/departments/:id', (req, res) => {
     const sql = `SELECT * FROM department WHERE id = ?`;
@@ -149,6 +168,30 @@ app.post('/api/roles', ({body}, res) => {
     const sql = `INSERT INTO role (title, salary, department_id)
     VALUES (?, ?, ?)`;
     const params = [body.title, body.salary, body.department_id];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: 'success',
+          data: body
+        });
+      });
+});
+
+// Create an employee
+app.post('/api/employees', ({body}, res) => {
+    const errors =inputCheck(body, 'first_name', 'last_name', 'role_id', 'manager_id');
+    if (errors) {
+        res.status(400).json({error: errors});
+        return;
+    };
+
+    const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+    VALUES (?, ?, ?, ?)`;
+    const params = [body.first_name, body.last_name, body.role_id, body.manager_id];
 
     db.query(sql, params, (err, result) => {
         if (err) {
