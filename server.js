@@ -230,6 +230,11 @@ app.post('/api/employees', ({body}, res) => {
 
 // Update an employee
 app.put('/api/employees/:id', (req, res) => {
+    const errors = inputCheck(req.body, 'role_id');
+    if (errors) {
+        res.status(400).json({ error: errors });
+        return;
+    }
     const sql = `UPDATE employee SET role_id = ? where id =?`;
     const params = [req.body.role_id, req.params.id];
     db.query(sql, params, (err, result) => {
