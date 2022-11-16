@@ -1,4 +1,5 @@
 const express = require('express');
+const inputCheck = require('./utils/inputCheck');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -77,16 +78,27 @@ app.delete('/api/departments/:id', (req, res) => {
 });
 
 // Create a department
-// const sql = `INSERT INTO department (name) 
-//               VALUES (?)`;
-// const params = ['Jane Test'];
+app.post('/api/departments', ({body}, res) => {
+    const errors =inputCheck(body, 'name');
+    if (errors) {
+        res.status(400).json({error: errors});
+        return;
+    };
 
-// db.query(sql, params, (err, result) => {
-//   if (err) {
-//     console.log(err);
-//   }
-//   console.log(result);
-// });
+    const sql = `INSERT INTO department (name) VALUES (?)`;
+    const params = [body.name];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: 'success',
+          data: body
+        });
+      });
+});
 
 app.get('/', (req, res) => {
     res.json({
