@@ -37,6 +37,21 @@ app.get('/api/departments', (req, res) => {
     });
 });
 
+// Get all roles
+app.get('/api/roles', (req, res) => {
+    const sql = `SELECT role.title, role.id, d.name department_name, role.salary FROM role left join department d ON role.department_id = d.id`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({error: err.message});
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
+
 // Get a single departments
 app.get('/api/departments/:id', (req, res) => {
     const sql = `SELECT * FROM department WHERE id = ?`;
@@ -87,6 +102,30 @@ app.post('/api/departments', ({body}, res) => {
 
     const sql = `INSERT INTO department (name) VALUES (?)`;
     const params = [body.name];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: 'success',
+          data: body
+        });
+      });
+});
+
+// Create a role
+app.post('/api/roles', ({body}, res) => {
+    const errors =inputCheck(body, 'title', 'salary', 'department_id');
+    if (errors) {
+        res.status(400).json({error: errors});
+        return;
+    };
+
+    const sql = `INSERT INTO role (title, salary, department_id)
+    VALUES (?, ?, ?)`;
+    const params = [body.title, body.salary, body.department_id];
 
     db.query(sql, params, (err, result) => {
         if (err) {
